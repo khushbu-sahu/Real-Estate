@@ -24,3 +24,15 @@ app.use('/api/user', userRouter)
 
 app.use('/api/auth', authRouter )
 
+//middleware to handle errrors and send them to the clinet and in place of res.send we can use next and replace try and catch block
+app.use((err, req, res, next)=>{
+    const statusCode = err.statusCode || 500;
+    const message = err.message || 'Internal Server Error';
+    return res.status(statusCode).json({
+        success: false,
+        statusCode,
+        message,
+    })
+
+})
+

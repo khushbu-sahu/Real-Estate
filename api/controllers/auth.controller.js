@@ -46,3 +46,34 @@ export const signin=async(req, res, next)=>{
 {
     next(error);
 }}
+
+
+//google auth
+
+export const google = async (req, res, next) => {
+    try{
+        const user = await User.findOne({ email: req.body.email})
+        if(user){
+            const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
+            const {password: pass, ...rest } = user._doc;
+            res
+                .cookie('access token', token, {httpOnly: true})
+                .status(200)
+                .json(rest);
+            }
+            else{
+                // genrated password and we used math dot random method ,we creata a random number and then convert this number to string and based on 36 . 36 means number form 0 to 9 and also letters to a too z so this is going to be random leter and number together and also we want last eight digit
+                const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+                const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+                const newUser = new User({ username: req.body.name.split(" ").join("").toLowerCase()+Math.random().toString(36).slice(-4) , email: req.body.email, password: hashedPassword, avatar: req.body.photo });
+                await newUser.save();
+
+                const token = jwt.sign({id: newUser._id }, process.env.JWT_SECRET);
+                const {password: pass, ...rest } = newUser._doc;
+                res.cookie('access_token' , token, { httpOnly: true}).status(200).json(rest);
+        }
+
+    }catch(error){
+        next(error)
+    }
+}

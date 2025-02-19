@@ -21,10 +21,15 @@ const listingSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
-    bathrooms:{
+    bathroom:{
         type: Number,
         required: true,
     },
+    bedroom:{
+        type: Number,
+        required: true,
+    },
+
     furnished:{
         type: Boolean,
         required: true,
@@ -45,7 +50,7 @@ const listingSchema = new mongoose.Schema({
         type: Array,
         required: true,
     },
-    useRef:{
+    userRef:{
         type: String,
         required: true,
     }
